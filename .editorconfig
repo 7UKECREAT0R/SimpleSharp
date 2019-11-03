@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# IDE1006: Naming Styles
+dotnet_diagnostic.IDE1006.severity = none
+
+# IDE0063: Use simple 'using' statement
+csharp_prefer_simple_using_statement = true:none
