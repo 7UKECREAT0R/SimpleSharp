@@ -103,7 +103,7 @@ namespace SimpleSharp
                     break;
                 }
             }
-            Console.WriteLine("Something went wrong with parenthesis finding... skips=" + skips);
+            Console.WriteLine("Something went wrong with parenthesis finding... (skips={0})", skips);
             Console.ReadLine();
             return -1;
         }
@@ -260,9 +260,20 @@ namespace SimpleSharp
                 ln = "foreach(var " + left + " in " + right + ") {";
                 return ln;
             }
+            if (ln.ToLower().StartsWith("repeat()", StringComparison.OrdinalIgnoreCase)
+                || ln.ToLower().StartsWith("loop()", StringComparison.OrdinalIgnoreCase))
+            {
+                return "while(true) {";
+            }
             if (ln.ToLower().StartsWith("repeat(", StringComparison.OrdinalIgnoreCase))
             {
                 string _i = GetParenthesisContents(ln, "repeat", out _);
+                ln = "for(int i = 0; i < " + _i + "; i++) {";
+                return ln;
+            }
+            if (ln.ToLower().StartsWith("loop(", StringComparison.OrdinalIgnoreCase))
+            {
+                string _i = GetParenthesisContents(ln, "loop", out _);
                 ln = "for(int i = 0; i < " + _i + "; i++) {";
                 return ln;
             }
@@ -327,10 +338,10 @@ namespace SimpleSharp
                 if(mth.Equals("If")) { continue; }
                 ln = ln.Replace(mth + "(", mth + "(", StringComparison.OrdinalIgnoreCase);
             }
-            foreach (string fld in ReferenceManager.referencedFields)
+            /*foreach (string fld in ReferenceManager.referencedFields)
             {
                 ln = ln.Replace("." + fld, "." + fld, StringComparison.OrdinalIgnoreCase);
-            }
+            }*/
             if(!b4.Equals(ln))
             {
                 Console.WriteLine("CORRECTED: {0}", ln);
@@ -737,14 +748,25 @@ namespace SimpleSharp
                         new Action<int>(ThreadSleep)});
                     } catch(Exception exc)
                     {
+                #if !DEBUG
                         string msg = exc.Message;
 
                         Console.Clear();
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Uh oh, an error occurred in your code!\n" +
                             "Let's try and figure out what the problem is.\n\n");
-                        Console.WriteLine("This is the error it gave you:\n\"{0}\"", msg);
+                        Console.WriteLine("This is the error it gave you:\n\"{0}, {1}\"", msg);
+
+                        if(exc is IndexOutOfRangeException)
+                        {
+                            Console.WriteLine("\n\nThis typically means that you tried to set an array outside the the specified size, " +
+                                "or you tried to draw something outside the bounds of the screen.");
+                        }
+
                         Console.ReadLine();
+                #else
+                        Console.Error.WriteLine("Unhandled exception. {0}", exc.ToString());
+                #endif
                     }
                 }
             }
@@ -885,12 +907,14 @@ namespace SimpleSharp
         }
         public static void ThreadSleep(int millis)
         {
-            // flush pending console keys
-            while(Console.KeyAvailable)
-                Console.ReadKey(true);
-
             // actually sleep
             Thread.Sleep(millis);
+            FlushConsoleBuffer();
+        }
+        public static void FlushConsoleBuffer()
+        {
+            while (Console.KeyAvailable)
+                Console.ReadKey(true);
         }
     }
 }

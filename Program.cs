@@ -106,15 +106,20 @@ namespace SimpleSharp
         {
             Dictionary<string, string> c = new Dictionary<string, string>();
             // Enums
-            c.Add("consolekey.", "ConsoleKey.");
-
+            c.Add("key.", "ConsoleKey.");
+            c.Add("consolecolor.", "ConsoleColor.");
             // Functions
+
             c.Add("break()", "break");
+            //c.Add("loop()", "while(true)");
 
             c.Add("charat(", "__FetchCharAt(");
             c.Add("write(", "Console.Write(");
-            c.Add("writeat(", "PInvoke.WriteAt(");
-            c.Add("renderwrites()", "PInvoke.RenderWLQUEUE()");
+            c.Add("drawat(", "PInvoke.WriteAt(");
+            c.Add("drawrectangle(", "PInvoke.WriteRectangleAt(");
+            c.Add("drawline(", "PInvoke.WriteLineAt(");
+            c.Add("drawhollowrectangle(", "PInvoke.WriteHollowRectangleAt(");
+            c.Add("render()", "PInvoke.RenderWLQUEUE()");
             c.Add("writeline(", "Console.WriteLine(");
             c.Add("setcursorpos(", "Console.SetCursorPosition(");
             c.Add("cursorx", "Console.CursorLeft");
@@ -135,10 +140,19 @@ namespace SimpleSharp
             c.Add("load(", "File.ReadAllText(");
             c.Add("exists(", "File.Exists(");
             c.Add("delete(", "File.Delete(");
+            c.Add("setconsoleselectable(", "PInvoke.SetQuickEditMode(");
+            c.Add("presskeys(", "PInvoke.SendKeysInternal(");
+            c.Add("clickleft(", "PInvoke.SendLeftClickInternal(");
+            c.Add("clickright(", "PInvoke.SendRightClickInternal(");
+            c.Add("clickmiddle(", "PInvoke.SendMiddleClickInternal(");
+            c.Add("getmouseX()", "PInvoke.GetMousePositionOnAxis(0)");
+            c.Add("getmouseY()", "PInvoke.GetMousePositionOnAxis(1)");
+            c.Add("setmouseposition(", "PInvoke.SetMousePositionInternal(");
+            c.Add("mouseevent(", "PInvoke.SendMouseEventInternalFromCommand(");
 
             // Delegates (using different definitions 
             // for different application types.)
-            if(CodeConsumer.IS_EXE_OUTPUT())
+            if (CodeConsumer.IS_EXE_OUTPUT())
             {
                 c.Add("exit()", "Environment.Exit(0)");
                 c.Add("wait(", "Thread.Sleep(");
@@ -213,7 +227,10 @@ namespace SimpleSharp
             c.Add(".remove(", ".Remove(");
             c.Add(".removeat(", ".RemoveAt(");
             c.Add(".clear()", ".Clear()");
+
             c.Add("otherwise", "else");
+            c.Add(".equals(", ".Equals(");
+
             CodeConsumer.conversions = c;
         }
     }
